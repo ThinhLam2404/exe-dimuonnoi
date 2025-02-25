@@ -1,4 +1,4 @@
-const baseURL = "http://localhost:3000/";
+const baseURL = "https://dimuonnoi-be.onrender.com/";
 
 export const API_PATH = {
   user: baseURL + "users",
@@ -14,21 +14,21 @@ export const API_PATH = {
   shoesSize: baseURL + "size/shoesSize",
   account: baseURL + "admin/account",
   import: baseURL + "import",
-  cart: baseURL + 'cart',
-  cartDelete: baseURL + 'cart/delete',
-  productDetail: baseURL + 'cart/product',
-  order: baseURL + 'order',
-  confirmOrder: baseURL + 'order/confirm',
-  cancelOrder: baseURL + 'order/cancel',
-  orderDetails: baseURL + 'order/details',
-  pendingOrder: baseURL + 'order/pending',
-  doneOrder: baseURL + 'order/done',
-  shippedOrder: baseURL + 'order/shipped',
-  payment: baseURL + 'payment',
-  feedback: baseURL + 'feedback',
-  statistic: baseURL + 'statistic',
+  cart: baseURL + "cart",
+  cartDelete: baseURL + "cart/delete",
+  productDetail: baseURL + "cart/product",
+  order: baseURL + "order",
+  confirmOrder: baseURL + "order/confirm",
+  cancelOrder: baseURL + "order/cancel",
+  orderDetails: baseURL + "order/details",
+  pendingOrder: baseURL + "order/pending",
+  doneOrder: baseURL + "order/done",
+  shippedOrder: baseURL + "order/shipped",
+  payment: baseURL + "payment",
+  feedback: baseURL + "feedback",
+  statistic: baseURL + "statistic",
   admin: baseURL + "admin",
-}
+};
 export const PATH = {
   user: baseURL + "users",
   discount: baseURL + "discount",
@@ -47,4 +47,3 @@ export const PATH = {
 
   profile: baseURL + "account",
 };
-

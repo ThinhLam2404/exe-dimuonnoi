@@ -66,7 +66,7 @@ const TshirtCustomer = () => {
                     <img
                       alt="example"
                       style={{ width: "100%" }}
-                      src={`http://localhost:3000${item.tshirtImg}`}
+                      src={`https://dimuonnoi-be.onrender.com${item.tshirtImg}`}
                     />
                   }
                 >
