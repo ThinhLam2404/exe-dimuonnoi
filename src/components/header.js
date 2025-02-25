@@ -1,9 +1,7 @@
-import React, { useEffect } from "react";
-
-import { SearchOutlined } from "@ant-design/icons";
+import React, { useEffect, useState } from "react";
+import { SearchOutlined, MenuOutlined } from "@ant-design/icons"; // Thêm MenuOutlined
 import { Col, Image, List, Menu, Row, Typography } from "antd";
 import axios from "axios";
-import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../assets/css/header.css";
 import LogoExe from "../assets/images/logo_exe.png";
@@ -15,16 +13,11 @@ import { useAuth } from "./context/AuthContext";
 const { Text } = Typography;
 
 const Header = () => {
-  const [searchFocus, setSearchForcus] = useState(false);
+  const [searchFocus, setSearchFocus] = useState(false);
   const [searchList, setSearchList] = useState([]);
-  const [isCheck, setIsCheck] = useState();
+  const [menuVisible, setMenuVisible] = useState(false); // Trạng thái hiển thị menu mobile
   const [carts, setCarts] = useState([]);
-  const [voucher, setVoucher] = useState([]);
-  // const [messageApi, contextHolder] = message.useMessage(null)
-  const [totalAmount, setTotalAmount] = useState(Number);
-  const [total, setTotal] = useState(Number);
-  const [initialTotal, setInitialTotal] = useState(0);
-
+  const [total, setTotal] = useState(0);
   const { isAuthenticated, username, user } = useAuth();
   const [initialValues, setInitialValues] = useState({
     userId: "",
@@ -33,6 +26,8 @@ const Header = () => {
     phone: "",
     address: "",
   });
+  const navigate = useNavigate();
+
   useEffect(() => {
     const fetchData = async () => {
       if (isAuthenticated) {
@@ -50,161 +45,12 @@ const Header = () => {
           .catch((error) => console.error("Error fetching data:", error));
       }
     };
-
     fetchData();
   }, [isAuthenticated]);
 
-  useEffect(() => {
-    if (initialValues.userId) {
-      // getListCart(initialValues.userId, setCarts, (total) => {
-      //   setTotal(total);
-      //   setInitialTotal(total);
-      // });
-      setIsCheck(null);
-    }
-  }, [totalAmount, initialValues.userId]);
-  console.log(initialValues.userId);
-  const cartPopover = (
-    <div className="cart-pop">
-      <div className="card-pop-title text">
-        <p>GIỎ HÀNG</p>
-      </div>
-      <List
-        itemLayout="horizontal"
-        dataSource={carts}
-        renderItem={(item) => {
-          return (
-            <List.Item>
-              <List.Item.Meta
-                avatar={
-                  item.productImage ? (
-                    <Image
-                      width={100}
-                      src={`${API_PATH.image}/${item.product.product_id}/${item.productImage._id}${item.productImage.file_extension}`}
-                    />
-                  ) : (
-                    // {`${API_PATH.image}/${item.product.product_id}/${item.productImage._id}${item.productImage.file_extension}`}
-                    // <span>{item.productImage ? item.productImage._id : "default extension"}</span>
-
-                    <Image width={100} src="path-to-default-image" />
-                    // <span>{item.productImage ? item.productImage.file_extension : "default extension"}</span>
-                  )
-                }
-                title={
-                  <Text
-                    style={{
-                      display: "block",
-                      textAlign: "left",
-                      fontSize: "15px",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    {item.product.name}
-                  </Text>
-                }
-                description={
-                  <div
-                    style={{
-                      marginTop: "5px",
-                      display: "block",
-                      textAlign: "left",
-                    }}
-                  >
-                    <Text style={{ color: "#888" }}>
-                      {(item.product.price * item.quantity).toLocaleString()}
-                      <Text
-                        style={{
-                          fontSize: "10px",
-                          color: "#888",
-                          textDecorationLine: "underline",
-                        }}
-                      >
-                        đ
-                      </Text>
-                    </Text>
-                    <br />
-                    <Text style={{ color: "#888" }}>
-                      Kích thước:{" "}
-                      {item.productSize
-                        ? item.productSize.size_name
-                        : "Không có kích thước"}
-                    </Text>
-                    <br />
-                    {/* <InputNumber min={1} max={item.product.quantity} defaultValue={Math.min(item.quantity, item.product.quantity)} onChange={(value) => onChange(value, item._id)} /> */}
-                  </div>
-                }
-                style={{ marginLeft: "10px" }}
-              />
-              <div style={{ textAlign: "right" }}>
-                <Text
-                  style={{
-                    fontSize: "15px",
-                    color: "black",
-                    fontWeight: "bold",
-                  }}
-                >
-                  {(
-                    (item.product.price -
-                      item.product.price * (item.product.discount / 100)) *
-                    item.quantity
-                  ).toLocaleString()}
-                  <Text
-                    style={{
-                      fontSize: "10px",
-                      color: "black",
-                      textDecorationLine: "underline",
-                    }}
-                  >
-                    đ
-                  </Text>
-                </Text>
-              </div>
-            </List.Item>
-          );
-        }}
-      />
-      <div className="flex-space-between">
-        <p className="text">TỔNG TIỀN:</p>
-        <p style={{ color: "red", fontWeight: "600", fontSize: 16 }}>
-          {total.toLocaleString()}0đ
-        </p>
-      </div>
-      <div className="flex-space-between cart-pop-navigate">
-        <button
-          className="login-pop-btn"
-          onClick={() => navigate(CART_URL.INDEX)}
-        >
-          <span>XEM GIỎ HÀNG</span>
-        </button>
-        <button
-          className="login-pop-btn"
-          onClick={() =>
-            navigate(PAYMENT_URL.INDEX, { state: { voucherTotal: total } })
-          }
-        >
-          <span>THANH TOÁN</span>
-        </button>
-      </div>
-    </div>
-  );
-
   const items = [
-    {
-      label: <Link to="/customer">HOME</Link>,
-      key: "HOME",
-    },
-    {
-      label: <Link to="/customer/tshirt">T-SHIRT</Link>,
-      key: "T-SHIRT",
-    },
-    // {
-    //   label: <Link to="/customer/pant">PANTS</Link>,
-    //   key: "PANTS",
-    // },
-    // {
-    //   label: <Link to="/customer/shoes">SHOES</Link>,
-    //   key: "SHOES",
-    // },
+    { label: <Link to="/customer">HOME</Link>, key: "HOME" },
+    { label: <Link to="/customer/tshirt">T-SHIRT</Link>, key: "T-SHIRT" },
     {
       label: <Link to="/customer/accessory">ACCESSORIES</Link>,
       key: "ACCESSORIES",
@@ -213,23 +59,17 @@ const Header = () => {
       label: (
         <Link to="https://dimuonnoi.github.io/site/design.html">CUSTOM</Link>
       ),
-      key: "",
+      key: "CUSTOM",
     },
-    {
-      label: <Link to="/customer/about">ABOUT</Link>,
-      key: "ABOUT",
-    },
+    { label: <Link to="/customer/about">ABOUT</Link>, key: "ABOUT" },
     {
       label: <Link to="/customer/exchange-policy">EXCHANGE POLICY</Link>,
       key: "EXCHANGE POLICY",
     },
-    {
-      label: <Link to="/customer/contact">CONTACT</Link>,
-      key: "CONTACT",
-    },
+    { label: <Link to="/customer/contact">CONTACT</Link>, key: "CONTACT" },
   ];
 
-  const navigate = useNavigate();
+  const toggleMenu = () => setMenuVisible(!menuVisible); // Toggle menu mobile
 
   return (
     <div className="header">
@@ -240,55 +80,45 @@ const Header = () => {
         </p>
       </Row>
       <Row className="container header-middle flex-center">
-        <Col span={4}>
+        <Col xs={12} md={4} className="logo-col">
           <img src={LogoExe} alt="logo" className="logo" />
         </Col>
-        <Col span={9} style={{ position: "relative" }}>
+        <Col xs={0} md={9} className="search-col">
           <div className="flex-center">
             <input
-              onFocus={() => {
-                setSearchForcus(true);
-              }}
-              onBlur={() => {
-                setTimeout(() => setSearchForcus(false), 100);
-              }}
+              onFocus={() => setSearchFocus(true)}
+              onBlur={() => setTimeout(() => setSearchFocus(false), 100)}
               onChange={(e) => {
-                let text = e.target.value;
+                let text = e.target.value.trimStart();
                 if (!text) setSearchList([]);
-                if (text.startsWith(" ")) {
-                  text = text.trimStart();
-                } else {
-                  if (text) {
-                    getSearchList(text, setSearchList);
-                  }
-                }
+                else getSearchList(text, setSearchList);
               }}
               pattern="^[^\s].*"
               name="search"
               placeholder="Tìm kiếm sản phẩm..."
               className="search-input"
-              autocomplete="off"
+              autoComplete="off"
             />
             <div className="search-btn">
               <SearchOutlined />
             </div>
           </div>
-          {searchFocus ? (
+          {searchFocus && (
             <div className="search-item">
-              {searchList?.tshirts && searchList?.tshirts?.length !== 0 ? (
+              {searchList?.tshirts?.length > 0 && (
                 <List
                   itemLayout="horizontal"
-                  dataSource={searchList?.tshirts}
-                  renderItem={(item, index) => (
-                    <List.Item style={{ cursor: "pointer" }}>
+                  dataSource={searchList.tshirts}
+                  renderItem={(item) => (
+                    <List.Item
+                      onClick={() =>
+                        navigate(`/customer/tshirt/${item.tshirtId}`)
+                      }
+                    >
                       <List.Item.Meta
-                        onClick={() => {
-                          console.log("ao");
-                          navigate(`/customer/tshirt/${item.tshirtId}`);
-                        }}
                         avatar={
                           <img
-                            src={"http://localhost:3000" + item.tshirtImg}
+                            src={`https://dimuonnoi-be.onrender.com${item.tshirtImg}`}
                             alt=""
                           />
                         }
@@ -302,7 +132,7 @@ const Header = () => {
                                   item.tshirtDiscountPercent) /
                                   100
                               ).toLocaleString("vi-VN")}
-                              ₫
+                              ₫{" "}
                               <del>
                                 {item.tshirtPrice.toLocaleString("vi-VN")}₫
                               </del>
@@ -315,196 +145,22 @@ const Header = () => {
                     </List.Item>
                   )}
                 />
-              ) : (
-                <div></div>
-              )}
-              {searchList?.pants && searchList?.pants?.length !== 0 ? (
-                <List
-                  itemLayout="horizontal"
-                  dataSource={searchList?.pants}
-                  renderItem={(item, index) => (
-                    <List.Item style={{ cursor: "pointer" }}>
-                      <List.Item.Meta
-                        onClick={() => {
-                          console.log("ao");
-                          navigate(`/customer/pant/${item.pantId}`);
-                        }}
-                        avatar={
-                          <img
-                            src={"http://localhost:3000" + item.pantImg}
-                            alt=""
-                          />
-                        }
-                        title={<p>{item.pantName}</p>}
-                        description={
-                          item.pantDiscountPercent ? (
-                            <p>
-                              {(
-                                item.pantPrice -
-                                (item.pantPrice * item.pantDiscountPercent) /
-                                  100
-                              ).toLocaleString("vi-VN")}
-                              ₫
-                              <del>
-                                {item.pantPrice.toLocaleString("vi-VN")}₫
-                              </del>
-                            </p>
-                          ) : (
-                            <p>{item.pantPrice.toLocaleString("vi-VN")}₫</p>
-                          )
-                        }
-                      />
-                    </List.Item>
-                  )}
-                />
-              ) : (
-                ""
-              )}
-              {searchList?.shoesList && searchList?.shoesList?.length !== 0 ? (
-                <List
-                  itemLayout="horizontal"
-                  dataSource={searchList?.shoesList}
-                  renderItem={(item, index) => (
-                    <List.Item style={{ cursor: "pointer" }}>
-                      <List.Item.Meta
-                        onClick={() => {
-                          navigate(`/customer/shoes/${item.shoesId}`);
-                        }}
-                        avatar={
-                          <img
-                            src={"http://localhost:3000" + item.shoesImg}
-                            alt=""
-                          />
-                        }
-                        title={<p>{item.shoesName}</p>}
-                        description={
-                          item.shoesDiscountPercent ? (
-                            <p>
-                              {(
-                                item.shoesPrice -
-                                (item.shoesPrice * item.shoesDiscountPercent) /
-                                  100
-                              ).toLocaleString("vi-VN")}
-                              ₫
-                              <del>
-                                {item.shoesPrice.toLocaleString("vi-VN")}₫
-                              </del>
-                            </p>
-                          ) : (
-                            <p>{item.shoesPrice.toLocaleString("vi-VN")}₫</p>
-                          )
-                        }
-                      />
-                    </List.Item>
-                  )}
-                />
-              ) : (
-                ""
-              )}
-              {searchList?.accessories &&
-              searchList?.accessories?.length !== 0 ? (
-                <List
-                  itemLayout="horizontal"
-                  dataSource={searchList?.accessories}
-                  renderItem={(item, index) => (
-                    <List.Item style={{ cursor: "pointer" }}>
-                      <List.Item.Meta
-                        onClick={() => {
-                          navigate(`/customer/accessory/${item.accessoryId}`);
-                        }}
-                        avatar={
-                          <img
-                            src={"http://localhost:3000" + item.accessoryImg}
-                            alt=""
-                          />
-                        }
-                        title={<p>{item.accessoryName}</p>}
-                        description={
-                          item.accessoryDiscountPercent ? (
-                            <p>
-                              {(
-                                item.accessoryPrice -
-                                (item.accessoryPrice *
-                                  item.accessoryDiscountPercent) /
-                                  100
-                              ).toLocaleString("vi-VN")}
-                              ₫
-                              <del>
-                                {item.accessoryPrice.toLocaleString("vi-VN")}₫
-                              </del>
-                            </p>
-                          ) : (
-                            <p>
-                              {item.accessoryPrice.toLocaleString("vi-VN")}₫
-                            </p>
-                          )
-                        }
-                      />
-                    </List.Item>
-                  )}
-                />
-              ) : (
-                ""
               )}
             </div>
-          ) : (
-            ""
           )}
         </Col>
-        {/* <Col span={8} className="login-cart flex-center">
-          {isAuthenticated ? (
-            <Popover
-              content={LoginPopover}
-              trigger="click"
-              className="login-box flex-center "
-            >
-              <div className="user-icon">
-                <UserOutlined className="icon" />
-              </div>
-              <div className="login">
-                <p style={{ color: "#333333" }}>Tài khoản của</p>
-                <p style={{ fontWeight: 500 }}>
-                  {username} <DownOutlined />
-                </p>
-              </div>
-            </Popover>
-          ) : (
-            <Popover
-              content={LoginPopover}
-              trigger="click"
-              className="login-box flex-center "
-            >
-              <div className="user-icon">
-                <UserOutlined className="icon" />
-              </div>
-              <div className="login">
-                <p style={{ color: "#333333" }}>Đăng nhập / Đăng ký</p>
-                <p style={{ fontWeight: 500 }}>
-                  Tài khoản của tôi <DownOutlined />
-                </p>
-              </div>
-            </Popover>
-          )}
-          <Popover
-            placement="bottomRight"
-            content={cartPopover}
-            trigger="click"
-            className="cart flex-center"
-          >
-            <Badge
-              count={carts.length}
-              showZero
-              style={{ backgroundColor: "#333333" }}
-            >
-              <ShoppingOutlined className="icon" />
-            </Badge>
-            <p style={{ marginLeft: 10 }}>Giỏ hàng</p>
-          </Popover>
-        </Col> */}
+        <Col xs={12} md={0} className="hamburger-col">
+          <MenuOutlined className="hamburger-icon" onClick={toggleMenu} />
+        </Col>
       </Row>
       <Row className="container header-menu">
-        <Menu mode="horizontal" items={items} />
+        <Menu mode="horizontal" items={items} className="desktop-menu" />
       </Row>
+      {menuVisible && (
+        <Row className="mobile-menu">
+          <Menu mode="vertical" items={items} />
+        </Row>
+      )}
     </div>
   );
 };
